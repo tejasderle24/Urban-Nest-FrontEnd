@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import ContactInfoItem from './InfoItem';
 

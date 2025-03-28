@@ -18,8 +18,8 @@ import {
   Copy,
   Compass
 } from "lucide-react";
-import { Backendurl } from "../../App.jsx";
 import ScheduleViewing from "./ScheduleViewing";
+import { API_URL } from "../../api/index.js";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -35,7 +35,7 @@ const PropertyDetails = () => {
     const fetchProperty = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${Backendurl}/api/products/single/${id}`);
+        const response = await axios.get(`${API_URL}/api/products/single/${id}`);
 
         if (response.data.success) {
           const propertyData = response.data.property;
