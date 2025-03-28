@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
-import { backendurl } from '../App';
+
 import { Upload, X } from 'lucide-react';
+import { AdminUrl } from '../api';
 
 const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
@@ -101,7 +102,7 @@ const PropertyForm = () => {
         formdata.append(`image${index + 1}`, image);
       });
 
-      const response = await axios.post(`${backendurl}/api/products/add`, formdata, {
+      const response = await axios.post(`${AdminUrl}/api/products/add`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -155,7 +156,7 @@ const PropertyForm = () => {
                 required
                 value={formData.title}
                 onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border border-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full p-2 rounded-md border border-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
 
@@ -170,7 +171,7 @@ const PropertyForm = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={3}
-                className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full  rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
 
@@ -185,7 +186,7 @@ const PropertyForm = () => {
                   required
                   value={formData.type}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Type</option>
                   {PROPERTY_TYPES.map(type => (
@@ -206,7 +207,7 @@ const PropertyForm = () => {
                   required
                   value={formData.availability}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Availability</option>
                   {AVAILABILITY_TYPES.map(type => (
@@ -231,7 +232,7 @@ const PropertyForm = () => {
                   min="0"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
 
@@ -246,7 +247,7 @@ const PropertyForm = () => {
                   required
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -264,7 +265,7 @@ const PropertyForm = () => {
                   min="0"
                   value={formData.beds}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
 
@@ -280,7 +281,7 @@ const PropertyForm = () => {
                   min="0"
                   value={formData.baths}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
 
@@ -296,7 +297,7 @@ const PropertyForm = () => {
                   min="0"
                   value={formData.sqft}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border p-2 border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -312,7 +313,7 @@ const PropertyForm = () => {
                 required
                 value={formData.phone}
                 onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full p-2 rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
           </div>
@@ -332,7 +333,7 @@ const PropertyForm = () => {
                     value={amenity}
                     checked={formData.amenities.includes(amenity)}
                     onChange={() => handleAmenityToggle(amenity)}
-                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    className="h-4 w-4 text-indigo-600 p-2 border-gray-300 rounded focus:ring-indigo-500"
                   />
                   <label htmlFor={`amenity-${index}`} className="ml-2 block text-sm text-gray-700">
                     {amenity}
@@ -346,7 +347,7 @@ const PropertyForm = () => {
                 value={newAmenity}
                 onChange={(e) => setNewAmenity(e.target.value)}
                 placeholder="Add new amenity"
-                className="mt-1 block w-full rounded-md border border-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border p-2 border-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
               <button
                 type="button"

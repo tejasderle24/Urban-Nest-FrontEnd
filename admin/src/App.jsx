@@ -1,20 +1,13 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "react-error-boundary";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Components
-import {Navbar, ProtectedRoute, ErrorFallback, Login } from './components/index';
+import { Navbar, ProtectedRoute, ErrorFallback, Login } from "./components/index";
 
 // Pages
-// import Dashboard from "./pages/Dashboard";
-// import List from "./pages/List";
-// import Add from "./pages/Add";
-// import Update from "./pages/Update";
-// import Appointments from "./pages/Appointments";
-
-// Config
-// export const backendurl = import.meta.env.VITE_BACKEND_URL;
+import { Dashboard, List, Add, Update, Appointments } from "./pages/index";
 
 // Page transition variants
 const pageVariants = {
@@ -32,46 +25,103 @@ const App = () => {
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <AnimatePresence mode="wait">
-          <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={pageVariants}
-            transition={{ duration: 0.3 }}
-          >
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-              {/* Protected Routes */}
-              {/* <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/list" element={<List />} />
-                <Route path="/add" element={<Add />} />
-                <Route path="/update/:id" element={<Update />} />
-                <Route path="/appointments" element={<Appointments />} />
-              </Route> */}
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route
+                path="/dashboard"
+                element={
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Dashboard />
+                  </motion.div>
+                }
+              />
+              <Route
+                path="/list"
+                element={
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <List />
+                  </motion.div>
+                }
+              />
+              <Route
+                path="/add"
+                element={
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Add />
+                  </motion.div>
+                }
+              />
+              <Route
+                path="/update/:id"
+                element={
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Update />
+                  </motion.div>
+                }
+              />
+              <Route
+                path="/appointments"
+                element={
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Appointments />
+                  </motion.div>
+                }
+              />
+            </Route>
 
-              {/* 404 Route */}
-              {/* <Route path="*" element={<Navigate to="/dashboard" replace />} /> */}
-            </Routes>
-          </motion.div>
+            {/* 404 Route */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
         </AnimatePresence>
 
         {/* Toast Notifications */}
-        <Toaster 
+        <Toaster
           position="top-right"
           toastOptions={{
-            duration: 3000,
+            duration: 3000,   // 3 seconds
             style: {
-              background: '#333',
-              color: '#fff',
+              background: "#333",
+              color: "#fff",
             },
           }}
         />
       </div>
-     </ErrorBoundary>
+    </ErrorBoundary>
   );
 };
 
