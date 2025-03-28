@@ -19,8 +19,8 @@
 
 | Method | Endpoint          | Description                   |
 |--------|------------------|------------------------------|
-| POST   | `/api/auth/login`  | User login                  |
-| POST   | `/api/auth/register` | User registration          |
+| POST   | `/api/user/login`  | User login                  |
+| POST   | `/api/user/register` | User registration          |
 | GET    | `/api/products`   | Fetch all products          |
 | GET    | `/api/products/:id` | Fetch a single product     |
 | POST   | `/api/cart`       | Add item to cart            |
