@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import NotFoundPage from "./components/NotFound";
 import {Login, Signup, ForgotPassword, ResetPassword} from "./components/Auth/index";
 import {Home,Contact,Properties, Aboutus} from './pages/index'
+import PropertyDetails from "./components/properties/PropertyDetails";
 
 const App = () => {
   return (
@@ -24,7 +25,7 @@ const App = () => {
           <Route path="/reset/:token" element={<ResetPassword />} />
           <Route path="/" element={<Home />} />
           <Route path="/properties" element={<Properties />} />
-          {/* <Route path="/properties/single/:id" element={<PropertyDetails />} />*/}
+          <Route path="/properties/single/:id" element={<PropertyDetails />} />
         <Route path="/about" element={<Aboutus />} /> 
         <Route path="/contact" element={<Contact />} />
         {/* <Route path="/ai-property-hub" element={<AIPropertyHub />} />*/}
