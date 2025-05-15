@@ -23,7 +23,6 @@ const App = () => {
       onReset={() => window.location.reload()}
     >
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <AnimatePresence mode="wait">
           <Routes>
             {/* Public Routes */}
@@ -35,71 +34,86 @@ const App = () => {
               <Route
                 path="/dashboard"
                 element={
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Dashboard />
-                  </motion.div>
+                  <>
+                    <Navbar />
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={pageVariants}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Dashboard />
+                    </motion.div>
+                  </>
                 }
               />
               <Route
                 path="/list"
                 element={
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <List />
-                  </motion.div>
+                  <>
+                    <Navbar />
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={pageVariants}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <List />
+                    </motion.div>
+                  </>
                 }
               />
               <Route
                 path="/add"
                 element={
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Add />
-                  </motion.div>
+                  <>
+                    <Navbar />
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={pageVariants}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Add />
+                    </motion.div>
+                  </>
                 }
               />
               <Route
                 path="/update/:id"
                 element={
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Update />
-                  </motion.div>
+                  <>
+                    <Navbar />
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={pageVariants}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Update />
+                    </motion.div>
+                  </>
                 }
               />
               <Route
                 path="/appointments"
                 element={
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Appointments />
-                  </motion.div>
+                  <>
+                    <Navbar />
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={pageVariants}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Appointments />
+                    </motion.div>
+                  </>
                 }
               />
             </Route>
