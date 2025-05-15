@@ -282,7 +282,7 @@ const NavLinks = ({ currentPath }) => {
         );
       })}
 
-      {/* Enhanced AI Property Hub Link
+      {/* Enhanced AI Property Hub Link */}
       <Link
         to="/ai-property-hub"
         className={`relative font-medium transition-all duration-300 flex items-center gap-2 px-3 py-1.5 rounded-md ${
@@ -323,7 +323,7 @@ const NavLinks = ({ currentPath }) => {
             NEW
           </motion.span>
         )}
-      </Link> */}
+      </Link> 
     </div>
   );
 };

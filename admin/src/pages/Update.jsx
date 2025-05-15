@@ -8,6 +8,10 @@ import { AdminUrl } from '../api';
 const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool', 'Garage', 'Garden', 'Gym', 'Security system', 'Master bathroom', 'Guest bathroom', 'Home theater', 'Exercise room/gym', 'Covered parking', 'High-speed internet ready'];
+const FURNISHING_TYPES = ['Fully Furnished', 'Semi-Furnished', 'Unfurnished'];
+const PROPERTY_STATUS_TYPES = ['Under Construction', 'Ready to Move', 'New Launch', 'Resale'];
+const FACING_DIRECTIONS = ['East', 'West', 'North', 'South', 'North-East', 'North-West', 'South-East', 'South-West'];
+const AGE_OF_PROPERTY_TYPES = ['0-1 year', '1-5 years', '5-10 years', '10+ years'];
 
 const Update = () => {
   const { id } = useParams();
@@ -24,10 +28,26 @@ const Update = () => {
     phone: '',
     availability: '',
     amenities: [],
-    images: []
+    images: [],
+    furnishing: '',
+    propertyStatus: '',
+    facingDirection: '',
+    floorLevel: '',
+    ageOfProperty: '',
+    petFriendly: false,
+    nearbyFacilities: {
+      schools: [],
+      hospitals: [],
+      stations: [],
+      malls: [],
+      others: []
+    },
+    keywords: []
   });
   const [previewUrls, setPreviewUrls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [newKeyword, setNewKeyword] = useState('');
+  const [newFacility, setNewFacility] = useState({ type: 'schools', name: '' });
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -48,7 +68,21 @@ const Update = () => {
             phone: property.phone,
             availability: property.availability,
             amenities: property.amenities,
-            images: property.image
+            images: property.image,
+            furnishing: property.furnishing || '',
+            propertyStatus: property.propertyStatus || '',
+            facingDirection: property.facingDirection || '',
+            floorLevel: property.floorLevel || '',
+            ageOfProperty: property.ageOfProperty || '',
+            petFriendly: property.petFriendly || false,
+            nearbyFacilities: property.nearbyFacilities || {
+              schools: [],
+              hospitals: [],
+              stations: [],
+              malls: [],
+              others: []
+            },
+            keywords: property.keywords || []
           });
           setPreviewUrls(property.image);
         } else {
@@ -68,6 +102,14 @@ const Update = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: checked
     }));
   };
 
@@ -97,6 +139,46 @@ const Update = () => {
     }));
   };
 
+  const handleAddKeyword = () => {
+    if (newKeyword && !formData.keywords.includes(newKeyword)) {
+      setFormData(prev => ({
+        ...prev,
+        keywords: [...prev.keywords, newKeyword]
+      }));
+      setNewKeyword('');
+    }
+  };
+
+  const handleRemoveKeyword = (keyword) => {
+    setFormData(prev => ({
+      ...prev,
+      keywords: prev.keywords.filter(k => k !== keyword)
+    }));
+  };
+
+  const handleAddFacility = () => {
+    if (newFacility.name) {
+      setFormData(prev => ({
+        ...prev,
+        nearbyFacilities: {
+          ...prev.nearbyFacilities,
+          [newFacility.type]: [...prev.nearbyFacilities[newFacility.type], newFacility.name]
+        }
+      }));
+      setNewFacility({ ...newFacility, name: '' });
+    }
+  };
+
+  const handleRemoveFacility = (type, facility) => {
+    setFormData(prev => ({
+      ...prev,
+      nearbyFacilities: {
+        ...prev.nearbyFacilities,
+        [type]: prev.nearbyFacilities[type].filter(f => f !== facility)
+      }
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -117,6 +199,20 @@ const Update = () => {
       formdata.append('amenities', JSON.stringify(formData.amenities));
       formData.images.forEach((image, index) => {
         formdata.append(`image${index + 1}`, image);
+      });
+      formdata.append('furnishing', formData.furnishing);
+      formdata.append('propertyStatus', formData.propertyStatus);
+      formdata.append('facingDirection', formData.facingDirection);
+      formdata.append('floorLevel', formData.floorLevel);
+      formdata.append('ageOfProperty', formData.ageOfProperty);
+      formdata.append('petFriendly', formData.petFriendly);
+      
+      // Add nearbyFacilities as JSON
+      formdata.append('nearbyFacilities', JSON.stringify(formData.nearbyFacilities));
+      
+      // Add keywords
+      formData.keywords.forEach((keyword, index) => {
+        formdata.append(`keywords[${index}]`, keyword);
       });
 
       const response = await axios.post(`${AdminUrl}/api/products/update`, formdata);
@@ -312,6 +408,222 @@ const Update = () => {
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+            </div>
+          </div>
+
+          {/* Additional Property Details */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900">Additional Details</h3>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="furnishing" className="block text-sm font-medium text-gray-700">
+                  Furnishing
+                </label>
+                <select
+                  id="furnishing"
+                  name="furnishing"
+                  value={formData.furnishing}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Furnishing</option>
+                  {FURNISHING_TYPES.map(type => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="propertyStatus" className="block text-sm font-medium text-gray-700">
+                  Property Status
+                </label>
+                <select
+                  id="propertyStatus"
+                  name="propertyStatus"
+                  value={formData.propertyStatus}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Status</option>
+                  {PROPERTY_STATUS_TYPES.map(type => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="facingDirection" className="block text-sm font-medium text-gray-700">
+                  Facing Direction
+                </label>
+                <select
+                  id="facingDirection"
+                  name="facingDirection"
+                  value={formData.facingDirection}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Direction</option>
+                  {FACING_DIRECTIONS.map(direction => (
+                    <option key={direction} value={direction}>
+                      {direction}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="ageOfProperty" className="block text-sm font-medium text-gray-700">
+                  Age of Property
+                </label>
+                <select
+                  id="ageOfProperty"
+                  name="ageOfProperty"
+                  value={formData.ageOfProperty}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Age</option>
+                  {AGE_OF_PROPERTY_TYPES.map(age => (
+                    <option key={age} value={age}>
+                      {age}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="floorLevel" className="block text-sm font-medium text-gray-700">
+                  Floor Level
+                </label>
+                <input
+                  type="text"
+                  id="floorLevel"
+                  name="floorLevel"
+                  value={formData.floorLevel}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Ground Floor, 3rd Floor"
+                  className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+
+              <div className="flex items-center mt-8">
+                <input
+                  type="checkbox"
+                  id="petFriendly"
+                  name="petFriendly"
+                  checked={formData.petFriendly}
+                  onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                />
+                <label htmlFor="petFriendly" className="ml-2 block text-sm text-gray-700">
+                  Pet Friendly
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Keywords */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Keywords
+            </label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.keywords.map((keyword, index) => (
+                <div key={index} className="bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                  <span className="text-sm">{keyword}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveKeyword(keyword)}
+                    className="ml-2 text-gray-500 hover:text-gray-700"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newKeyword}
+                onChange={(e) => setNewKeyword(e.target.value)}
+                placeholder="Add keyword (e.g., sea view, garden facing)"
+                className="mt-1 block w-full rounded-md border p-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+              <button
+                type="button"
+                onClick={handleAddKeyword}
+                className="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+
+          {/* Nearby Facilities */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nearby Facilities
+            </label>
+            
+            {/* Display existing facilities */}
+            {Object.entries(formData.nearbyFacilities).map(([type, facilities]) => (
+              facilities.length > 0 && (
+                <div key={type} className="mb-2">
+                  <h4 className="text-sm font-medium capitalize">{type}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {facilities.map((facility, idx) => (
+                      <div key={idx} className="bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                        <span className="text-sm">{facility}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFacility(type, facility)}
+                          className="ml-2 text-gray-500 hover:text-gray-700"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            ))}
+            
+            {/* Add new facility */}
+            <div className="flex items-center mt-2">
+              <select
+                value={newFacility.type}
+                onChange={(e) => setNewFacility({ ...newFacility, type: e.target.value })}
+                className="mt-1 w-1/3 rounded-md border p-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value="schools">Schools</option>
+                <option value="hospitals">Hospitals</option>
+                <option value="stations">Stations</option>
+                <option value="malls">Malls</option>
+                <option value="others">Others</option>
+              </select>
+              <input
+                type="text"
+                value={newFacility.name}
+                onChange={(e) => setNewFacility({ ...newFacility, name: e.target.value })}
+                placeholder={`Add nearby ${newFacility.type}`}
+                className="mt-1 ml-2 block w-full rounded-md border p-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+              <button
+                type="button"
+                onClick={handleAddFacility}
+                className="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Add
+              </button>
             </div>
           </div>
 

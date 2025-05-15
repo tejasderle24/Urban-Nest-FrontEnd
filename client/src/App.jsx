@@ -7,15 +7,19 @@ import NotFoundPage from "./components/NotFound";
 import {Login, Signup, ForgotPassword, ResetPassword} from "./components/Auth/index";
 import {Home,Contact,Properties, Aboutus} from './pages/index'
 import PropertyDetails from "./components/properties/PropertyDetails";
+import AIPropertyHub from "./pages/Aiagent";
+import { HelmetProvider } from "react-helmet-async";
+import StructuredData from "./components/SEO/StructuredData";
 
 const App = () => {
   return (
-    // <HelmetProvider>
+    <HelmetProvider>
     <AuthProvider>
       <Router>
         {/* Base website structured data */}
-        {/* <StructuredData type="website" />
-        <StructuredData type="organization" /> */}
+        <StructuredData type="website" />
+        <StructuredData type="organization" />
+
 
         <Navbar />
         <Routes>
@@ -28,14 +32,14 @@ const App = () => {
           <Route path="/properties/single/:id" element={<PropertyDetails />} />
         <Route path="/about" element={<Aboutus />} /> 
         <Route path="/contact" element={<Contact />} />
-        {/* <Route path="/ai-property-hub" element={<AIPropertyHub />} />*/}
+        <Route path="/ai-property-hub" element={<AIPropertyHub />} />
         <Route path="*" element={<NotFoundPage />} /> 
         </Routes>
         <Footer />
         <ToastContainer />
       </Router>
     </AuthProvider>
-    // </HelmetProvider>
+   </HelmetProvider>
   )
 }
 
