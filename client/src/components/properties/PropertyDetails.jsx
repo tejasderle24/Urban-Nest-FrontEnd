@@ -16,7 +16,17 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
-  Compass
+  Compass,
+  Home,
+  Tag,
+  CheckCircle,
+  Clock,
+  Sofa,
+  Dog,
+  School,
+  Hospital,
+  Train,
+  ShoppingBag
 } from "lucide-react";
 import ScheduleViewing from "./ScheduleViewing";
 import { API_URL } from "../../api/index.js";
@@ -352,6 +362,79 @@ const PropertyDetails = () => {
                     <p className="text-sm text-gray-600">{property.sqft} sqft</p>
                   </div>
                 </div>
+                
+                {/* Property Details */}
+                <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                  <h2 className="text-xl font-semibold mb-4">Property Details</h2>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-gray-600">
+                        <Home className="w-5 h-5 mr-2 text-blue-600" />
+                        <span>Property Type</span>
+                      </div>
+                      <span className="font-medium">{property.type}</span>
+                    </div>
+                    
+                    {property.furnishing && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-600">
+                          <Sofa className="w-5 h-5 mr-2 text-blue-600" />
+                          <span>Furnishing</span>
+                        </div>
+                        <span className="font-medium">{property.furnishing}</span>
+                      </div>
+                    )}
+                    
+                    {property.propertyStatus && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-600">
+                          <CheckCircle className="w-5 h-5 mr-2 text-blue-600" />
+                          <span>Status</span>
+                        </div>
+                        <span className="font-medium">{property.propertyStatus}</span>
+                      </div>
+                    )}
+                    
+                    {property.facingDirection && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-600">
+                          <Compass className="w-5 h-5 mr-2 text-blue-600" />
+                          <span>Facing</span>
+                        </div>
+                        <span className="font-medium">{property.facingDirection}</span>
+                      </div>
+                    )}
+                    
+                    {property.floorLevel && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-600">
+                          <Building className="w-5 h-5 mr-2 text-blue-600" />
+                          <span>Floor Level</span>
+                        </div>
+                        <span className="font-medium">{property.floorLevel}</span>
+                      </div>
+                    )}
+                    
+                    {property.ageOfProperty && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-600">
+                          <Clock className="w-5 h-5 mr-2 text-blue-600" />
+                          <span>Age of Property</span>
+                        </div>
+                        <span className="font-medium">{property.ageOfProperty}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-gray-600">
+                        <Dog className="w-5 h-5 mr-2 text-blue-600" />
+                        <span>Pet Friendly</span>
+                      </div>
+                      <span className="font-medium">{property.petFriendly ? 'Yes' : 'No'}</span>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="mb-6">
                   <h2 className="text-xl font-semibold mb-4">Contact Details</h2>
@@ -380,6 +463,25 @@ const PropertyDetails = () => {
                   </p>
                 </div>
 
+                {/* Keywords/Tags */}
+                {property.keywords && property.keywords.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-xl font-semibold mb-4">Keywords</h2>
+                    <div className="flex flex-wrap gap-2">
+                      {property.keywords.map((keyword, index) => (
+                        <span 
+                          key={index} 
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm 
+                            bg-blue-50 text-blue-700"
+                        >
+                          <Tag className="w-3 h-3 mr-1" />
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mb-6">
                   <h2 className="text-xl font-semibold mb-4">Amenities</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -388,12 +490,89 @@ const PropertyDetails = () => {
                         key={index}
                         className="flex items-center text-gray-600"
                       >
-                        <Building className="w-4 h-4 mr-2 text-blue-600" />
+                        <CheckCircle className="w-4 h-4 mr-2 text-blue-600" />
                         {amenity}
                       </div>
                     ))}
                   </div>
                 </div>
+                
+                {/* Nearby Facilities */}
+                {property.nearbyFacilities && Object.values(property.nearbyFacilities).some(arr => arr.length > 0) && (
+                  <div className="mb-6">
+                    <h2 className="text-xl font-semibold mb-4">Nearby Facilities</h2>
+                    
+                    {property.nearbyFacilities.schools && property.nearbyFacilities.schools.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                          <School className="w-5 h-5 mr-2 text-blue-600" />
+                          Schools
+                        </h3>
+                        <ul className="list-disc list-inside pl-2 text-gray-600">
+                          {property.nearbyFacilities.schools.map((school, index) => (
+                            <li key={index}>{school}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {property.nearbyFacilities.hospitals && property.nearbyFacilities.hospitals.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                          <Hospital className="w-5 h-5 mr-2 text-blue-600" />
+                          Hospitals
+                        </h3>
+                        <ul className="list-disc list-inside pl-2 text-gray-600">
+                          {property.nearbyFacilities.hospitals.map((hospital, index) => (
+                            <li key={index}>{hospital}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {property.nearbyFacilities.stations && property.nearbyFacilities.stations.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                          <Train className="w-5 h-5 mr-2 text-blue-600" />
+                          Stations
+                        </h3>
+                        <ul className="list-disc list-inside pl-2 text-gray-600">
+                          {property.nearbyFacilities.stations.map((station, index) => (
+                            <li key={index}>{station}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {property.nearbyFacilities.malls && property.nearbyFacilities.malls.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                          <ShoppingBag className="w-5 h-5 mr-2 text-blue-600" />
+                          Malls
+                        </h3>
+                        <ul className="list-disc list-inside pl-2 text-gray-600">
+                          {property.nearbyFacilities.malls.map((mall, index) => (
+                            <li key={index}>{mall}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {property.nearbyFacilities.others && property.nearbyFacilities.others.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                          <Building className="w-5 h-5 mr-2 text-blue-600" />
+                          Other Facilities
+                        </h3>
+                        <ul className="list-disc list-inside pl-2 text-gray-600">
+                          {property.nearbyFacilities.others.map((facility, index) => (
+                            <li key={index}>{facility}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
