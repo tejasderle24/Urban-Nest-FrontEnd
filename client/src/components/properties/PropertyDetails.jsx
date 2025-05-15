@@ -49,9 +49,63 @@ const PropertyDetails = () => {
 
         if (response.data.success) {
           const propertyData = response.data.property;
+          console.log("Raw property data:", propertyData);
+          
+          // Process the amenities directly here
+          let processedAmenities = [];
+          
+          if (propertyData.amenities) {
+            try {
+              if (Array.isArray(propertyData.amenities)) {
+                // If it's an array of strings, use it directly
+                if (propertyData.amenities.length > 0 && typeof propertyData.amenities[0] === 'string' && 
+                    !propertyData.amenities[0].includes('[')) {
+                  processedAmenities = propertyData.amenities;
+                } 
+                // If it's an array with a JSON string, parse it
+                else if (propertyData.amenities.length > 0 && typeof propertyData.amenities[0] === 'string' 
+                        && propertyData.amenities[0].includes('[')) {
+                  const cleaned = propertyData.amenities[0].replace(/'/g, '"');
+                  processedAmenities = JSON.parse(cleaned);
+                }
+                // Special case: If amenities is an array with a single string value that looks like "Lake View,Fireplace,..."
+                else if (propertyData.amenities.length === 1 && typeof propertyData.amenities[0] === 'string' 
+                        && propertyData.amenities[0].includes(',')) {
+                  processedAmenities = propertyData.amenities[0].split(',').map(item => item.trim());
+                }
+              } else if (typeof propertyData.amenities === 'string') {
+                // If it's a JSON string, parse it
+                if (propertyData.amenities.includes('[')) {
+                  processedAmenities = JSON.parse(propertyData.amenities.replace(/'/g, '"'));
+                } else if (propertyData.amenities.includes(',')) {
+                  // If it's a comma-separated string
+                  processedAmenities = propertyData.amenities.split(',').map(item => item.trim());
+                } else {
+                  // Single amenity
+                  processedAmenities = [propertyData.amenities];
+                }
+              }
+            } catch (err) {
+              console.error("Error processing amenities:", err, "Raw value:", propertyData.amenities);
+              // Fallback: if all parsing fails, try to convert to string and split by comma
+              if (propertyData.amenities.toString) {
+                const amenitiesStr = propertyData.amenities.toString();
+                if (amenitiesStr.includes(',')) {
+                  processedAmenities = amenitiesStr.split(',').map(item => item.trim());
+                } else {
+                  processedAmenities = [amenitiesStr];
+                }
+              } else {
+                processedAmenities = [];
+              }
+            }
+          }
+          
+          console.log("Processed amenities:", processedAmenities);
+          
           setProperty({
             ...propertyData,
-            amenities: parseAmenities(propertyData.amenities)
+            amenities: processedAmenities
           });
           setError(null);
         } else {
@@ -73,20 +127,6 @@ const PropertyDetails = () => {
     window.scrollTo(0, 0);
     setActiveImage(0);
   }, [id]);
-
-  const parseAmenities = (amenities) => {
-    if (!amenities || !Array.isArray(amenities)) return [];
-    
-    try {
-      if (typeof amenities[0] === "string") {
-        return JSON.parse(amenities[0].replace(/'/g, '"'));
-      }
-      return amenities;
-    } catch (error) {
-      console.error("Error parsing amenities:", error);
-      return [];
-    }
-  };
 
   const handleKeyNavigation = useCallback((e) => {
     if (e.key === 'ArrowLeft') {
@@ -483,18 +523,32 @@ const PropertyDetails = () => {
                 )}
 
                 <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-4">Amenities</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    {property.amenities.map((amenity, index) => (
-                      <div 
-                        key={index}
-                        className="flex items-center text-gray-600"
-                      >
-                        <CheckCircle className="w-4 h-4 mr-2 text-blue-600" />
-                        {amenity}
-                      </div>
-                    ))}
-                  </div>
+                  <h2 className="text-xl font-semibold mb-4">
+                    Amenities
+                    <button
+                      onClick={() => console.log("Current amenities:", property.amenities)}
+                      className="ml-2 text-xs bg-gray-100 px-2 py-1 rounded text-gray-500 hover:bg-gray-200"
+                    >
+                      Debug
+                    </button>
+                  </h2>
+                  {property.amenities && Array.isArray(property.amenities) && property.amenities.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      {property.amenities.map((amenity, index) => (
+                        amenity && (
+                          <div 
+                            key={index}
+                            className="flex items-center text-gray-600"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2 text-blue-600" />
+                            {amenity}
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">No amenities listed for this property</p>
+                  )}
                 </div>
                 
                 {/* Nearby Facilities */}
