@@ -56,6 +56,12 @@ const Update = () => {
         console.log('Response:', response); // Log the response
         if (response.data.success) {
           const property = response.data.property;
+          
+          // Set previewUrls to the URLs of existing images
+          if (property.image && Array.isArray(property.image)) {
+            setPreviewUrls(property.image);
+          }
+          
           setFormData({
             title: property.title,
             type: property.type,
@@ -67,8 +73,8 @@ const Update = () => {
             sqft: property.sqft,
             phone: property.phone,
             availability: property.availability,
-            amenities: property.amenities,
-            images: property.image,
+            amenities: property.amenities || [],
+            images: property.image || [],
             furnishing: property.furnishing || '',
             propertyStatus: property.propertyStatus || '',
             facingDirection: property.facingDirection || '',
@@ -84,7 +90,6 @@ const Update = () => {
             },
             keywords: property.keywords || []
           });
-          setPreviewUrls(property.image);
         } else {
           toast.error(response.data.message);
         }
@@ -124,15 +129,32 @@ const Update = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
+    const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
+    
+    // Combine existing urls with new ones up to maximum of 4
+    const combinedPreviewUrls = [...previewUrls, ...newPreviewUrls].slice(0, 4);
+    setPreviewUrls(combinedPreviewUrls);
+    
+    // Keep existing images that are URLs and add new File objects
+    const newImages = [...formData.images];
+    files.forEach((file) => {
+      if (newImages.length < 4) {
+        newImages.push(file);
+      }
+    });
+    
     setFormData((prev) => ({
       ...prev,
-      images: files
+      images: newImages.slice(0, 4)
     }));
   };
 
   const removeImage = (index) => {
-    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    // Remove the preview URL
+    const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+    setPreviewUrls(newPreviewUrls);
+    
+    // Remove the corresponding image from formData.images
     setFormData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
@@ -197,9 +219,18 @@ const Update = () => {
       formdata.append('phone', formData.phone);
       formdata.append('availability', formData.availability);
       formdata.append('amenities', JSON.stringify(formData.amenities));
-      formData.images.forEach((image, index) => {
-        formdata.append(`image${index + 1}`, image);
-      });
+      
+      // Handle images - only append if it's a File object (new image)
+      // If no new images are uploaded, the backend will keep the existing ones
+      if (Array.isArray(formData.images)) {
+        formData.images.forEach((image, index) => {
+          // Check if it's a File object (new image) not a URL string (existing image)
+          if (image instanceof File) {
+            formdata.append(`image${index + 1}`, image);
+          }
+        });
+      }
+      
       formdata.append('furnishing', formData.furnishing);
       formdata.append('propertyStatus', formData.propertyStatus);
       formdata.append('facingDirection', formData.facingDirection);
@@ -211,9 +242,7 @@ const Update = () => {
       formdata.append('nearbyFacilities', JSON.stringify(formData.nearbyFacilities));
       
       // Add keywords
-      formData.keywords.forEach((keyword, index) => {
-        formdata.append(`keywords[${index}]`, keyword);
-      });
+      formdata.append('keywords', JSON.stringify(formData.keywords));
 
       const response = await axios.post(`${AdminUrl}/api/products/update`, formdata);
       if (response.data.success) {
